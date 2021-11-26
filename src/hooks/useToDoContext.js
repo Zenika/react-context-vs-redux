@@ -1,4 +1,4 @@
-import { createContext, useContext, useReducer } from "react";
+import { createContext, useContext, useReducer, useMemo, useCallback } from "react";
 import toDoReducer from '../reducer/toDoReducer'
 
 const ToDoContext = createContext({})
@@ -20,12 +20,28 @@ export default function useToDoContext() {
 export function ToDoContextProvider({ children }) {
   const [state, dispatch] = useReducer(toDoReducer, [])
 
-  const create = (list, description) => dispatch({ type: 'create', payload: { list, description } })
-  const update = (id, done) => dispatch({ type: 'update', payload: { id, done } })
-  const remove = (id) => dispatch({ type: 'delete', payload: id })
+  const create = useCallback(
+    (list, description) => dispatch({ type: 'create', payload: { list, description } }),
+    [dispatch]
+  )
+
+  const update = useCallback(
+    (id, done) => dispatch({ type: 'update', payload: { id, done } }),
+    [dispatch]
+  )
+
+  const remove = useCallback(
+    (id) => dispatch({ type: 'delete', payload: id }),
+    [dispatch]
+  )
+
+  const ctx = useMemo(
+    () => ({ state, create, update, remove }),
+    [state, create, update, remove]
+  )
 
   return (
-    <ToDoContext.Provider value={{ state, create, update, remove }}>
+    <ToDoContext.Provider value={ctx}>
       {children}
     </ToDoContext.Provider>
   );
