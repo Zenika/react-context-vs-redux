@@ -1,6 +1,20 @@
+import React from "react"
+import useToDoContext from "../hooks/useToDoContext"
+
 export default function ToDoForm({ listNames }) {
+  const { create } = useToDoContext()
+
+  const onSubmit = (e) => {
+    e.preventDefault()
+
+    create(
+      e.target.querySelector('[name=list]').value,
+      e.target.querySelector('[name=description]').value
+    )
+  }
+
   return (
-    <form className="box">
+    <form className="box" onSubmit={onSubmit}>
       <div className="field">
         <label className="label" htmlFor="description">To be done:</label>
         <div className="control">
