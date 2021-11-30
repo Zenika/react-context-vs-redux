@@ -1,16 +1,17 @@
+import { useCallback } from "react"
 import useToDoStore from "../hooks/useToDoStore"
 
 export default function ToDoForm({ listNames }) {
   const { create } = useToDoStore()
 
-  const onSubmit = (e) => {
+  const onSubmit = useCallback((e) => {
     e.preventDefault()
 
     create(
       e.target.querySelector('[name=list]').value,
       e.target.querySelector('[name=description]').value
     )
-  }
+  }, [create])
 
   return (
     <form className="box" onSubmit={onSubmit}>

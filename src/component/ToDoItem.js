@@ -1,11 +1,11 @@
-import React from "react"
+import React, { useCallback } from "react"
 import classNames from "classnames"
 import useToDoStore from "../hooks/useToDoStore"
 
 export function ToDoItem({ id, description, done }) {
   const { update, remove } = useToDoStore()
-  const onChange = () => update(id, !done)
-  const onClick = () => remove(id)
+  const onChange = useCallback(() => update(id, !done), [id, done, update])
+  const onClick = useCallback(() => remove(id), [id, remove])
 
   return (
     <>

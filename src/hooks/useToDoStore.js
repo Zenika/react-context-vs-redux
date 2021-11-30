@@ -1,3 +1,4 @@
+import { useCallback, useMemo } from 'react'
 import { configureStore, createSlice } from '@reduxjs/toolkit'
 import { Provider, useSelector, useDispatch } from 'react-redux'
 import toDoReducer from '../reducer/toDoReducer'
@@ -28,11 +29,25 @@ export default function useToDoStore() {
   const state = useSelector((state) => state.todo)
   const dispatch = useDispatch()
 
-  const create = (list, description) => dispatch(createAction({ list, description }))
-  const update = (id, done) => dispatch(updateAction({ id, done }))
-  const remove = (id) => dispatch(removeAction(id))
+  const create = useCallback(
+    (list, description) => dispatch(createAction({ list, description })),
+    []
+  )
 
-  return { state, create, update, remove }
+  const update = useCallback(
+    (id, done) => dispatch(updateAction({ id, done })),
+    []
+  )
+
+  const remove = useCallback(
+    (id) => dispatch(removeAction(id)),
+    []
+  )
+
+  return useMemo(
+    () => ({ state, create, update, remove }),
+    [state]
+  )
 }
 
 /**
