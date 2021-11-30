@@ -1,15 +1,25 @@
+import useToDoStore from "../hooks/useToDoStore";
 import ToDoForm from "./ToDoForm";
 import { ToDoList } from "./ToDoList";
 
 export default function ToDoApp() {
-  return [
-    <h1 className="title is-1">My ToDo Lists</h1>,
-    <ToDoForm listNames={['Buy fruits']} />,
-    <ToDoList name="Buy fruits" items={[
-      { id: 1, description: 'Banana', done: false },
-      { id: 2, description: 'Apple', done: true },
-      { id: 3, description: 'Orange', done: false },
-      { id: 4, description: 'Strawberry', done: false },
-    ]} />
-  ]
+  const { state } = useToDoStore()
+
+  const groups = state.reduce((obj, item) => ({
+    ...obj,
+    [item.list]: [...(obj[item.list] || []), item]
+  }), {})
+
+  return (
+    <>
+      <h1 className="title is-1">My ToDo Lists</h1>
+      <ToDoForm listNames={Object.keys(groups)} />
+      {
+        Object
+          .entries(groups)
+          .sort()
+          .map(([name, items]) => <ToDoList key={name} {...{ name, items }} />)
+      }
+    </>
+  )
 }

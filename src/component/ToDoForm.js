@@ -1,6 +1,19 @@
+import useToDoStore from "../hooks/useToDoStore"
+
 export default function ToDoForm({ listNames }) {
+  const { create } = useToDoStore()
+
+  const onSubmit = (e) => {
+    e.preventDefault()
+
+    create(
+      e.target.querySelector('[name=list]').value,
+      e.target.querySelector('[name=description]').value
+    )
+  }
+
   return (
-    <form className="box">
+    <form className="box" onSubmit={onSubmit}>
       <div className="field">
         <label className="label" htmlFor="description">To be done:</label>
         <div className="control">
@@ -13,7 +26,7 @@ export default function ToDoForm({ listNames }) {
         <div className="control">
           <input className="input" id="list" name="list" list="list-name" />
           <datalist id="list-name">
-            {listNames.map((name) => <option value={name} />)}
+            {listNames.map((name) => <option key={name} value={name} />)}
           </datalist>
         </div>
       </div>
