@@ -10,6 +10,10 @@ toDoReducer.create = (state, action) => {
   return [ ...state, { ...action.payload, id: createID(state) }]
 }
 
+toDoReducer.populate = (state, action) => {
+  return [...action.payload]
+}
+
 toDoReducer.update = (state, action) => {
   return state.map((item) => (
     (item.id !== action.payload.id) && item) || { ...item, ...action.payload }
