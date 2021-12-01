@@ -7,7 +7,11 @@ export default function toDoReducer(state, action) {
 }
 
 toDoReducer.create = (state, action) => {
-  return [ ...state, { ...action.payload, id: createID(state) }]
+  return [ ...state, { ...action.payload, id: action.payload.id || createID(state) }]
+}
+
+toDoReducer.populate = (state, action) => {
+  return [...action.payload]
 }
 
 toDoReducer.update = (state, action) => {

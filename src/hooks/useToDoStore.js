@@ -1,24 +1,22 @@
-import { useCallback, useMemo } from 'react'
-import { configureStore, createSlice } from '@reduxjs/toolkit'
+import { useCallback, useMemo, useEffect } from 'react'
+import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit'
 import { Provider, useSelector, useDispatch } from 'react-redux'
-import toDoReducer from '../reducer/toDoReducer'
-
-const toDoSlice = createSlice({
-  name: 'todo',
-  initialState: [],
-  reducers: {
-    createAction: toDoReducer.create,
-    updateAction: toDoReducer.update,
-    removeAction: toDoReducer.delete,
-  },
-})
-
-const { createAction, updateAction, removeAction } = toDoSlice.actions
+import logger from '../middleware/logger'
+import toDoSlice, {
+  populateActionAsync,
+  createActionAsync,
+  updateActionAsync,
+  removeActionAsync
+} from '../slice/toDoSlice'
 
 const store = configureStore({
   reducer: {
     todo: toDoSlice.reducer
-  }
+  },
+  middleware: [
+    ...getDefaultMiddleware(),
+    logger
+  ]
 })
 
 /**
@@ -29,24 +27,28 @@ export default function useToDoStore() {
   const state = useSelector((state) => state.todo)
   const dispatch = useDispatch()
 
+  useEffect(() => {
+    dispatch(populateActionAsync())
+  }, [dispatch])
+
   const create = useCallback(
-    (list, description) => dispatch(createAction({ list, description })),
-    []
+    (list, description) => dispatch(createActionAsync({ list, description })),
+    [dispatch]
   )
 
   const update = useCallback(
-    (id, done) => dispatch(updateAction({ id, done })),
-    []
+    (id, done) => dispatch(updateActionAsync({ id, done })),
+    [dispatch]
   )
 
   const remove = useCallback(
-    (id) => dispatch(removeAction(id)),
-    []
+    (id) => dispatch(removeActionAsync(id)),
+    [dispatch]
   )
 
   return useMemo(
     () => ({ state, create, update, remove }),
-    [state]
+    [state, create, update, remove]
   )
 }
 
